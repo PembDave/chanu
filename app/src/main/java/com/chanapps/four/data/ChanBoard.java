@@ -670,7 +670,7 @@ public class ChanBoard {
         if (boardCode == null || boardCode.isEmpty() || isVirtualBoard(boardCode))
             return URLFormatComponent.getUrl(context, URLFormatComponent.CHAN_FRONTPAGE_URL);
         else
-            return String.format(URLFormatComponent.getUrl(context, URLFormatComponent.CHAN_WEB_BOARD_URL_FORMAT), boardCode);
+            return URLFormatComponent.getBoardUrl(context, boardCode);
     }
 
     public int getThreadIndex(String boardCode, long threadNo) {
