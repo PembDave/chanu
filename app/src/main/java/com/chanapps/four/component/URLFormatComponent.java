@@ -2,7 +2,9 @@ package com.chanapps.four.component;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
+
 import com.chanapps.four.activity.SettingsActivity;
+import com.chanapps.four.data.ChanBoard;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -32,9 +34,9 @@ public class URLFormatComponent {
     public static final String CHAN_SPOILER_NUMBERED_IMAGE_URL_FORMAT = "//s.4cdn.org/image/spoiler-%s%d.png";
     public static final String CHAN_THREAD_URL_FORMAT = "//a.4cdn.org/%s/thread/%d.json";
     public static final String CHAN_THUMBS_URL_FORMAT = "//t.4cdn.org/%s/thumb/%ds.jpg";
-    public static final String CHAN_WEB_BOARD_URL_FORMAT = "//boards.4chan.org/%s/";
-    public static final String CHAN_WEB_POST_URL_FORMAT = "//boards.4chan.org/%s/res/%d#p%d";
-    public static final String CHAN_WEB_THREAD_URL_FORMAT = "//boards.4chan.org/%s/res/%d";
+    public static final String CHAN_WEB_BOARD_URL_FORMAT = "//%s/%s/";
+    public static final String CHAN_WEB_POST_URL_FORMAT = "//%s/%s/res/%d#p%d";
+    public static final String CHAN_WEB_THREAD_URL_FORMAT = "//%s/%s/res/%d";
     public static final String GERMAN_TRANSLATOR_URL = "//www.reddit.com/user/le_avx";
     public static final String GITHUB_ABPTR_URL = "//github.com/chrisbanes/ActionBar-PullToRefresh";
     public static final String GITHUB_CHAN_API_URL = "//github.com/4chan/4chan-API";
@@ -63,6 +65,9 @@ public class URLFormatComponent {
     };
     private static final Set<String> forceHttpsUrls = new HashSet<String>(FORCE_HTTPS_URLS.length);
 
+    private static final String WORKSAFE_BOARD_HOST = "boards.4channel.org";
+    private static final String NSFW_BOARD_HOST = "boards.4chan.org";
+
     public static String getUrl(Context context, String url) {
         if (url.startsWith("market://"))
             return url;
@@ -75,6 +80,33 @@ public class URLFormatComponent {
             useHttps = true;
         String protocol = useHttps ? "https:" : "http:";
         return protocol + url;
+    }
+
+    public static String getBoardUrl(Context context, String boardCode) {
+        return formatBoardUrl(context, CHAN_WEB_BOARD_URL_FORMAT, boardCode);
+    }
+
+    public static String getThreadUrl(Context context, String boardCode, long threadNo) {
+        return formatBoardUrl(context, CHAN_WEB_THREAD_URL_FORMAT, boardCode, threadNo);
+    }
+
+    public static String getPostUrl(Context context, String boardCode, long threadNo, long postNo) {
+        return formatBoardUrl(context, CHAN_WEB_POST_URL_FORMAT, boardCode, threadNo, postNo);
+    }
+
+    private static String formatBoardUrl(Context context, String format, String boardCode, Object... args) {
+        Object[] formatArgs = new Object[args.length + 2];
+        formatArgs[0] = getBoardHost(context, boardCode);
+        formatArgs[1] = boardCode;
+        if (args.length > 0)
+            System.arraycopy(args, 0, formatArgs, 2, args.length);
+        return String.format(getUrl(context, format), formatArgs);
+    }
+
+    private static String getBoardHost(Context context, String boardCode) {
+        if (boardCode == null || boardCode.isEmpty())
+            return NSFW_BOARD_HOST;
+        return ChanBoard.isWorksafe(context, boardCode) ? WORKSAFE_BOARD_HOST : NSFW_BOARD_HOST;
     }
 
 }

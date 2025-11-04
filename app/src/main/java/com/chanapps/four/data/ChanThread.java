@@ -335,7 +335,7 @@ public class ChanThread extends ChanPost {
     }
 
     public static String threadUrl(Context context, String boardCode, long threadNo) {
-        return String.format(URLFormatComponent.getUrl(context, URLFormatComponent.CHAN_WEB_THREAD_URL_FORMAT), boardCode, threadNo);
+        return URLFormatComponent.getThreadUrl(context, boardCode, threadNo);
     }
 
     public boolean isCurrent() {

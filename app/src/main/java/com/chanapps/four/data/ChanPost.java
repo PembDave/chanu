@@ -1307,7 +1307,7 @@ public class ChanPost implements Serializable {
     }
 
     public static String postUrl(Context context, String boardCode, long threadNo, long postNo) {
-        return String.format(URLFormatComponent.getUrl(context, URLFormatComponent.CHAN_WEB_POST_URL_FORMAT), boardCode, threadNo, postNo);
+        return URLFormatComponent.getPostUrl(context, boardCode, threadNo, postNo);
     }
 
     public String uniqueId() {
